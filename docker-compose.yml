@@ -1,0 +1,16 @@
+version: '2.1'
+services:
+  buildAwsCli:
+    build: build/.
+    image: 634961025262.dkr.ecr.ap-southeast-2.amazonaws.com/devops/alpine-awscli:build-local
+    volumes:
+      - ./dist/bin:/dist
+  distAwsCli:
+    build: dist/.
+    image: 634961025262.dkr.ecr.ap-southeast-2.amazonaws.com/devops/alpine-awscli:dist-local
+    env_file: .env
+
+networks:
+  default:
+    external:
+      name: bridge
