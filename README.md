@@ -1,4 +1,4 @@
-# awscli-static
+# alpine-awscli
 
 This is a static build of the AWS CLI, built for Alpine.
 
