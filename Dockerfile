@@ -42,7 +42,7 @@ FROM alpine:latest
 
 # Install PreReq's
 RUN apk --no-cache update && \
-    apk --no-cache add groff less && \
+    apk --no-cache add groff less jq && \
     rm -rf /var/cache/apk/*
 
 # Copy awscli from the builder image
