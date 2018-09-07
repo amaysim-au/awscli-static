@@ -1,11 +1,12 @@
-FROM alpine:3.8
+# Build Image
+FROM alpine:latest as builder
 
 ARG PYINSTALLER_TAG=v3.3
 
 ADD ./bin /pyinstaller
 
 RUN mkdir /src
-ADD ./change-botocore-root.py /src
+ADD ./bin/change-botocore-root.py /src
 
 # Install PreReq's
 RUN apk --update --no-cache add \
@@ -34,3 +35,18 @@ RUN chmod a+x /pyinstaller/* && \
       --add-data=/usr/lib/python3.6/site-packages/botocore/data:data \
       --runtime-hook=change-botocore-root.py /usr/bin/aws && \
     cp /src/dist/aws /usr/local/bin/
+
+
+# Runtime Image
+FROM alpine:latest
+
+# Install PreReq's
+RUN apk --no-cache update && \
+    apk --no-cache add groff less && \
+    rm -rf /var/cache/apk/*
+
+# Copy awscli from the builder image
+COPY --from=builder /usr/local/bin/aws /usr/local/bin/
+
+ENTRYPOINT [ "aws" ]
+CMD [ "help" ]
