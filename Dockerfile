@@ -40,16 +40,16 @@ RUN chmod a+x /pyinstaller/* && \
 # Runtime Image
 FROM alpine:latest
 
-# Install PreReq's
-RUN apk --no-cache update && \
-    apk --no-cache add bash groff less jq && \
-    rm -rf /var/cache/apk/*
+COPY ./bin/assume-role.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*
 
 # Copy awscli from the builder image
 COPY --from=builder /usr/local/bin/aws /usr/local/bin/
 
-COPY ./bin/assume-role.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/*
+# Install PreReq's
+RUN apk --no-cache update && \
+    apk --no-cache add bash groff less jq && \
+    rm -rf /var/cache/apk/*
 
 ENTRYPOINT [ "aws" ]
 CMD [ "help" ]
