@@ -34,22 +34,23 @@ RUN chmod a+x /pyinstaller/* && \
       --add-data=/usr/lib/python3.6/site-packages/awscli/data:data \
       --add-data=/usr/lib/python3.6/site-packages/botocore/data:data \
       --runtime-hook=change-botocore-root.py /usr/bin/aws && \
-    cp /src/dist/aws /usr/local/bin/
-
+    chmod +x /src/dist/aws
 
 # Runtime Image
 FROM alpine:latest
-
-COPY ./bin/assume-role.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/*
-
-# Copy awscli from the builder image
-COPY --from=builder /usr/local/bin/aws /usr/local/bin/
 
 # Install PreReq's
 RUN apk --no-cache update && \
     apk --no-cache add bash groff less jq && \
     rm -rf /var/cache/apk/*
+
+COPY --from=builder /src/dist/aws /opt/aws/bin/aws
+COPY ./bin/ /opt/aws/bin/
+RUN ln -s /opt/aws/bin/assume-role /usr/bin/assume-role && \
+    ln -s /opt/aws/bin/cfn-create-or-update /usr/bin/cfn-create-or-update && \
+    ln -s /opt/aws/bin/cfn-delete /usr/bin/cfn-delete && \
+    ln -s /opt/aws/bin/cfn-validate-template /usr/bin/cfn-validate-template && \
+    ln -s /opt/aws/bin/aws /usr/bin/aws
 
 ENTRYPOINT [ "aws" ]
 CMD [ "help" ]
