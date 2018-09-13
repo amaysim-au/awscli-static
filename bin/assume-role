@@ -11,11 +11,12 @@ EXPORT="${EXPORT:-no}"
 
 
 # KST=access*K*ey, *S*ecretkey, session*T*oken
-mapfile -t KST < <(aws sts assume-role --role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/$AWS_ROLE" \
-                          --role-session-name "$SESSION_NAME" \
-                          --duration-seconds "$DURATION" \
-                          --query '[Credentials.AccessKeyId,Credentials.SecretAccessKey,Credentials.SessionToken]' \
-                          --output text)
+KST=($(aws sts assume-role \
+        --role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/$AWS_ROLE" \
+        --role-session-name "$SESSION_NAME" \
+        --duration-seconds "$DURATION" \
+        --query '[Credentials.AccessKeyId,Credentials.SecretAccessKey,Credentials.SessionToken]' \
+        --output text))
 
 if [ "$EXPORT" == "yes" ]; then
   echo ""

@@ -46,6 +46,7 @@ RUN apk --no-cache update && \
 
 COPY --from=builder /src/dist/aws /opt/aws/bin/aws
 COPY ./bin/ /opt/aws/bin/
+
 RUN ln -s /opt/aws/bin/assume-role /usr/bin/assume-role && \
     ln -s /opt/aws/bin/assume-role /usr/bin/assume-role.sh  && \
     ln -s /opt/aws/bin/cfn-create-or-update /usr/bin/cfn-create-or-update && \
